@@ -1,5 +1,7 @@
 import express from 'express'
 import cors from 'cors'
+import mongoose from "mongoose";
+
 
 import HelloController
   from "./controllers/hello-controller.js"
@@ -13,8 +15,18 @@ const app = express()
 app.use(cors())
 app.use(express.json());
 
+const CONNECTION_STRING = process.env.DB_CONNECTION_STRING
+    || 'mongodb://localhost:27017/tuiter';
+mongoose.connect(CONNECTION_STRING).then(() => console.log(CONNECTION_STRING))
+.catch(err => {
+  console.log(
+    "Error in DB connection : " + JSON.stringify(err, undefined, 2)
+  );
+});;
+
+//mongoose.connect('mongodb://localhost:27017/tuiter')
 
 TuitsController(app);
 HelloController(app)
 UserController(app)
-app.listen(4000)
+app.listen(process.env.PORT || 4000);
